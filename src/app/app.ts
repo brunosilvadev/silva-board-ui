@@ -46,7 +46,7 @@ import { MessageService } from './services/message.service';
     .container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
       max-width: 600px;
       margin: 0 auto;
       padding: 20px;
@@ -54,20 +54,20 @@ import { MessageService } from './services/message.service';
     }
 
     .section {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .latest-message {
       flex: 0 0 auto;
-      padding: 20px;
+      padding: 16px;
       background: #ffffff;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .latest-message h2 {
-      margin: 0 0 12px 0;
-      font-size: 1.2rem;
+      margin: 0 0 10px 0;
+      font-size: 1.1rem;
       font-weight: 600;
       color: #333;
     }
@@ -80,27 +80,28 @@ import { MessageService } from './services/message.service';
     }
 
     .input-section {
-      flex: 1 1 auto;
+      flex: 0 0 auto;
       display: flex;
       flex-direction: column;
     }
 
     .input-section h2 {
-      margin: 0 0 12px 0;
-      font-size: 1.2rem;
+      margin: 0 0 10px 0;
+      font-size: 1.1rem;
       font-weight: 600;
       color: #333;
     }
 
     textarea {
-      flex: 1 1 auto;
       width: 100%;
-      padding: 16px;
+      min-height: 100px;
+      max-height: 200px;
+      padding: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 12px;
       font-size: 1rem;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      resize: none;
+      resize: vertical;
       box-sizing: border-box;
       transition: border-color 0.2s;
     }
@@ -118,12 +119,12 @@ import { MessageService } from './services/message.service';
       flex: 0 0 auto;
       display: flex;
       gap: 12px;
-      padding-bottom: 10px;
+      padding-bottom: 20px;
     }
 
     .btn {
       flex: 1;
-      padding: 16px;
+      padding: 14px;
       font-size: 1rem;
       font-weight: 600;
       border: none;
