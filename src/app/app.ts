@@ -9,7 +9,14 @@ import { MessageService } from './services/message.service';
     <div class="container">
       <div class="section latest-message">
         <h2>Latest Message</h2>
-        <p class="message-content">{{ latestMessage() || 'No message yet' }}</p>
+        @if (isLoadingMessage()) {
+          <div class="loading-container">
+            <div class="spinner"></div>
+            <p class="loading-text">Loading message...</p>
+          </div>
+        } @else {
+          <p class="message-content">{{ latestMessage() || 'No message yet' }}</p>
+        }
       </div>
 
       <div class="section input-section">
@@ -17,13 +24,21 @@ import { MessageService } from './services/message.service';
         <textarea 
           [(ngModel)]="newMessage" 
           placeholder="Type your message here..."
-          rows="6">
+          rows="6"
+          [disabled]="isSending()">
         </textarea>
       </div>
 
       <div class="section button-section">
-        <button class="btn btn-primary" (click)="sendMessage()">Send</button>
-        <button class="btn btn-secondary" (click)="cancelMessage()">Cancel</button>
+        <button class="btn btn-primary" (click)="sendMessage()" [disabled]="isSending()">
+          @if (isSending()) {
+            <div class="button-spinner"></div>
+            <span>Sending...</span>
+          } @else {
+            <span>Send</span>
+          }
+        </button>
+        <button class="btn btn-secondary" (click)="cancelMessage()" [disabled]="isSending()">Cancel</button>
       </div>
     </div>
   `,
@@ -144,6 +159,64 @@ import { MessageService } from './services/message.service';
       transform: scale(0.98);
     }
 
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary:disabled:hover {
+      background: #4CAF50;
+      transform: none;
+    }
+
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .loading-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 0;
+    }
+
+    .loading-text {
+      margin: 0;
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4CAF50;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .button-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top: 2px solid white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    textarea:disabled {
+      background-color: #f5f5f5;
+      cursor: not-allowed;
+    }
+
     @media (max-width: 600px) {
       .container {
         padding: 16px;
@@ -156,32 +229,40 @@ export class App implements OnInit {
   
   protected latestMessage = signal('');
   protected newMessage = '';
+  protected isLoadingMessage = signal(false);
+  protected isSending = signal(false);
 
   ngOnInit() {
     this.loadMessage();
   }
 
   loadMessage() {
+    this.isLoadingMessage.set(true);
     this.messageService.getMessage().subscribe({
       next: (message: string) => {
         this.latestMessage.set(message);
+        this.isLoadingMessage.set(false);
       },
       error: (error: any) => {
         console.error('Error loading message:', error);
+        this.isLoadingMessage.set(false);
       }
     });
   }
 
   sendMessage() {
     if (this.newMessage.trim()) {
+      this.isSending.set(true);
       this.messageService.sendMessage(this.newMessage.trim()).subscribe({
         next: (response: string) => {
           console.log('Message sent:', response);
           this.latestMessage.set(this.newMessage.trim());
           this.newMessage = '';
+          this.isSending.set(false);
         },
         error: (error: any) => {
           console.error('Error sending message:', error);
+          this.isSending.set(false);
         }
       });
     }
