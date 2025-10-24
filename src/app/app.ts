@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MessageService } from './services/message.service';
 
 @Component({
   selector: 'app-root',
@@ -150,14 +151,39 @@ import { FormsModule } from '@angular/forms';
     }
   `],
 })
-export class App {
+export class App implements OnInit {
+  private messageService = inject(MessageService);
+  
   protected latestMessage = signal('');
   protected newMessage = '';
 
+  ngOnInit() {
+    this.loadMessage();
+  }
+
+  loadMessage() {
+    this.messageService.getMessage().subscribe({
+      next: (message: string) => {
+        this.latestMessage.set(message);
+      },
+      error: (error: any) => {
+        console.error('Error loading message:', error);
+      }
+    });
+  }
+
   sendMessage() {
     if (this.newMessage.trim()) {
-      this.latestMessage.set(this.newMessage.trim());
-      this.newMessage = '';
+      this.messageService.sendMessage(this.newMessage.trim()).subscribe({
+        next: (response: string) => {
+          console.log('Message sent:', response);
+          this.latestMessage.set(this.newMessage.trim());
+          this.newMessage = '';
+        },
+        error: (error: any) => {
+          console.error('Error sending message:', error);
+        }
+      });
     }
   }
 
