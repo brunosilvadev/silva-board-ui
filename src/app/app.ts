@@ -24,7 +24,7 @@ import { MessageService } from './services/message.service';
         <textarea 
           [(ngModel)]="newMessage" 
           placeholder="Type your message here..."
-          rows="6"
+          rows="4"
           [disabled]="isSending()">
         </textarea>
       </div>
