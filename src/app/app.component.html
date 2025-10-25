@@ -1,0 +1,35 @@
+<div class="container">
+  <div class="section latest-message">
+    <h2>Latest Message</h2>
+    @if (isLoadingMessage()) {
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p class="loading-text">Loading message...</p>
+      </div>
+    } @else {
+      <p class="message-content">{{ latestMessage() || 'No message yet' }}</p>
+    }
+  </div>
+
+  <div class="section input-section">
+    <h2>New Message</h2>
+    <textarea 
+      [(ngModel)]="newMessage" 
+      placeholder="Type your message here..."
+      rows="4"
+      [disabled]="isSending()">
+    </textarea>
+  </div>
+
+  <div class="section button-section">
+    <button class="btn btn-primary" (click)="sendMessage()" [disabled]="isSending()">
+      @if (isSending()) {
+        <div class="button-spinner"></div>
+        <span>Sending...</span>
+      } @else {
+        <span>Send</span>
+      }
+    </button>
+    <button class="btn btn-secondary" (click)="cancelMessage()" [disabled]="isSending()">Cancel</button>
+  </div>
+</div>
